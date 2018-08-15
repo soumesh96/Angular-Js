@@ -1,0 +1,230 @@
+<html>
+   <head>
+       <script src="lib/js/angular.js"></script>
+       <script src="lib/js/jquery.js"></script>
+       <script src="lib/js/bootstrap.js"></script>
+	   <link rel="stylesheet" href="lib/css/bootstrap.css">
+	   <link rel="stylesheet" href="lib/css/font-awesome.css">
+   </head>
+   
+   <body ng-app="manageuser">
+        <div class="container" ng-controller="myuser">
+		    <div class="row">
+			    <div class="col-sm-12 jumbotron" style="padding:5px;">
+				    <ul class="nav nav-pills">
+					   <li><a href="index.html">Home</a></li>
+					   <li><a href="#" data-toggle="modal" data-target="#newuser">New User</a></li>
+					</ul>
+				</div>
+			</div>
+			
+			<div class="row">
+			   
+			   <div class="col-sm-12">
+			       <center>{{msg2}}</center>
+			       <table class="table table-bordered">
+				       <caption class="text-center">User List</caption>
+					   <tr>
+					       <th>Name</th>
+					       <th>Mobile</th>
+					       <th>City</th>
+					       <th>Age</th>
+					       <th>Pincode</th>
+					       <th>Edit</th>
+					       <th>Delete</th>
+					       
+					   </tr>
+					   
+					   <tr ng-repeat="row in userdata">
+					       <td> {{row.fullname}} </td>
+					       <td> {{row.mobile}} </td>
+					       <td> {{row.city}} </td>
+					       <td> {{row.age}} </td>
+					       <td> {{row.pincode}} </td>
+					       <td class="text-center"><a href="#" data-toggle="modal" data-target="#edituser" ng-click="edituser(userdata.indexOf(row))"><i class="fa fa-edit">  </i></a></td>
+					       <td class="text-center"><a href="#" ng-click="deluser(row.uid)"><i class="fa fa-trash">  </i></a></td>
+					   </tr>
+					   
+				   </table>
+			   </div>
+			</div>
+			
+			<!-- modal start -->
+				    <div class="modal fade" id="newuser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+				  
+                      <div class="modal-dialog modal-sm" role="document">
+                         <div class="modal-content">
+                             <div class="modal-header">
+                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                 <h4 class="modal-title" id="myModalLabel">New User</h4>
+								 <center> {{msg}} </center>
+                             </div>
+                             <div class="modal-body">
+                                 <div class="form-group">
+								    <label>Full Name</label>
+									<input type="text" class="form-control" ng-model="user.name">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>Mobile</label>
+									<input type="text" class="form-control" ng-model="user.mobile">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>Age</label>
+									<input type="text" class="form-control" ng-model="user.age">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>City</label>
+									<input type="text" class="form-control" ng-model="user.city">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>Pincode</label>
+									<input type="text" class="form-control" ng-model="user.pincode">
+								 </div>
+								 
+								 <div class="form-group text-center">
+								    <button class="btn btn-primary" ng-click="saveuser()">Save User</button>
+								 </div>
+								 
+								 
+								  
+                             </div> <!--  modal body end-->
+                             
+                        </div>
+                     </div>
+                 </div>
+				
+				<!-- modal end -->
+				
+				<!-- edit user modal -->
+				      <div class="modal fade" id="edituser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+				  
+                      <div class="modal-dialog modal-sm" role="document">
+                         <div class="modal-content">
+                             <div class="modal-header">
+                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                 <h4 class="modal-title" id="myModalLabel">Edit User</h4>
+								 <center> {{msg3}} </center>
+                             </div>
+                             <div class="modal-body">
+                                 <div class="form-group">
+								    <label>Full Name</label>
+									<input type="text" class="form-control" ng-model="user2.name">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>Mobile</label>
+									<input type="text" class="form-control" ng-model="user2.mobile">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>Age</label>
+									<input type="text" class="form-control" ng-model="user2.age">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>City</label>
+									<input type="text" class="form-control" ng-model="user2.city">
+								 </div>
+								 
+								 <div class="form-group">
+								    <label>Pincode</label>
+									<input type="text" class="form-control" ng-model="user2.pincode">
+									<input type="hidden" ng-model="user2.userid">
+								 </div>
+								 
+								 <div class="form-group text-center">
+								    <button class="btn btn-warning" ng-click="updateuser()">Update User</button>
+								 </div>
+								  
+                             </div> <!--  modal body end-->
+                             
+                        </div>
+                     </div>
+                 </div>
+				
+				<!-- edit user modal -->
+			
+		</div>
+		
+		<script>
+		    var obj= angular.module("manageuser", []);
+			obj.controller("myuser", function($scope, $http){
+			      var url= "http://cybotrix.com/webservice/getuser.php";
+			      $http.get(url).then(function(response){
+			       $scope.userdata= response.data;
+				   } );
+				 
+				 $scope.user= {};
+				 
+				 $scope.saveuser= function()
+				 {
+				    $http({
+                          url: "http://cybotrix.com/webservice/saveuser.php",
+                          method: "POST",
+                          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                          data: $.param($scope.user)
+                          }).success(function(data, status, headers, config) {
+                          $scope.msg="status is"+data;
+						  $scope.user="";
+						  $scope.reloaddata(); //to reload the list
+                          }).error(function(data, status, headers, config) {
+                          $scope.msg="status is"+data;
+                          });
+				 }
+				 
+				 $scope.deluser= function(id)
+				 {
+				    $http({
+                          url: "http://cybotrix.com/webservice/deleteuser.php?id="+id,
+                          method: "POST",
+                          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                          }).success(function(data, status, headers, config) {
+                          $scope.msg2= data;
+						  $scope.reloaddata(); //to reload the list
+                          }).error(function(data, status, headers, config) {
+                          $scope.msg2= data;
+                          });
+				 }
+				 
+				 $scope.reloaddata= function(){
+				    var url= "http://cybotrix.com/webservice/getuser.php";
+			        $http.get(url).then(function(response){
+			         $scope.userdata= response.data;
+				   } );
+				 }
+				 
+				 $scope.user2= {};
+				 
+				 $scope.edituser = function(index)
+				 {
+				    $scope.user2.name= $scope.userdata[index].fullname;
+				    $scope.user2.mobile= $scope.userdata[index].mobile;
+				    $scope.user2.city= $scope.userdata[index].city;
+				    $scope.user2.age= $scope.userdata[index].age;
+				    $scope.user2.pincode= $scope.userdata[index].pincode;
+				    $scope.user2.userid= $scope.userdata[index].uid;
+				 }
+				 $scope.updateuser= function()
+				 {
+				    $http({
+                          url: "http://cybotrix.com/webservice/updateuser.php",
+                          method: "POST",
+                          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                          data: $.param($scope.user2)
+                          }).success(function(data, status, headers, config) {
+                          $scope.msg3="status is"+data;
+						  $scope.reloaddata(); //to reload the list
+                          }).error(function(data, status, headers, config) {
+                          $scope.msg3="status is"+data;
+                          });
+				 }
+				 
+				 
+			});
+		</script>
+   </body>
+</html>
